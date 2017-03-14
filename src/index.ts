@@ -5,13 +5,16 @@ import props from 'snabbdom/modules/props'
 import style from 'snabbdom/modules/style'
 import h from 'snabbdom/h'
 import xs, { Stream, Producer, Listener } from 'xstream'
+import always = require('ramda/src/always')
+
+import { targetMatches } from './matches'
 
 const patch = init([ classes, props, style ])
-const root = document.getElementById('app')
 
 const view = (data: any): VNode =>
   h('p', [
-    h('button', 'Increment'),
+    h('button.increment', 'Increment'),
+    h('button.decrement', 'Decrement'),
     h('span', 'Count: ' + data.count)
   ])
 
@@ -39,12 +42,13 @@ const store = {
 }
 
 const increment = (data: {count: number}) => ({...data, count: data.count + 10})
+const decrement = (data: {count: number}) => ({...data, count: data.count - 10})
 
 const update = () => store.update(increment)
 
 // Initial view
 
-const initialVnodes = view(store.data)
+let initialVnodes = view(store.data)
 
 // Input streams: events -> data
 
@@ -58,15 +62,25 @@ const event$: Stream<Event> = xs.create({
   }
 } as Producer<Event>)
 
-event$
+const increment$ = event$
+  .filter(targetMatches('.increment'))
+  .map(always(increment))
+
+const decrement$ = event$
+  .filter(targetMatches('.decrement'))
+  .map(always(decrement))
+
+const action$ = xs.merge(increment$, decrement$)
+
+action$
   .addListener({
-    next(ev) {
-      update()
+    next(fn) {
+      store.update(fn)
     },
     error(err: any) {
       console.error('event$', err)
     },
-  } as Listener<Event>)
+  } as Listener<Function>)
 
 // Output streams: data -> vnodes
 
@@ -84,11 +98,17 @@ data$
   .addListener({
     next(vnodes: VNode) {
       patch(initialVnodes, vnodes)
+      initialVnodes = vnodes
     },
     error(err: any) {
       console.error('data$', err)
     }
   } as Listener<VNode>)
 
-patch(root, initialVnodes)
-store.emit()
+
+const start = (initialView: VNode, root: string) => {
+  patch(document.querySelector(root), initialView)
+  store.emit()
+}
+
+start(initialVnodes, '#app')
