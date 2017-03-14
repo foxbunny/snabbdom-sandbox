@@ -1,0 +1,35 @@
+{
+  "name": "snabtest",
+  "version": "0.1.0",
+  "description": "Snabdom test",
+  "main": "index.js",
+  "author": "Hajime Yamasaki",
+  "license": "MIT",
+  "dependencies": {
+    "awesome-typescript-loader": "^3.1.2",
+    "ramda": "^0.23.0",
+    "snabbdom": "^0.6.7"
+  },
+  "devDependencies": {
+    "@webpack-blocks/dev-server2": "^0.4.0",
+    "@webpack-blocks/postcss": "^0.4.2",
+    "@webpack-blocks/typescript": "^0.4.0",
+    "@webpack-blocks/webpack2": "^0.4.0",
+    "autoprefixer": "^6.7.7",
+    "copy-webpack-plugin": "^4.0.1",
+    "css-loader": "^0.27.3",
+    "file-loader": "^0.10.1",
+    "html-webpack-plugin": "^2.28.0",
+    "mkdirp": "^0.5.1",
+    "postcss-loader": "^1.3.3",
+    "progress-bar-webpack-plugin": "^1.9.3",
+    "style-loader": "^0.13.2",
+    "typescript": "^2.2.1",
+    "webpack": "^2.2.1",
+    "webpack-dev-server": "^2.4.1"
+  },
+  "scripts": {
+    "start": "NODE_ENV=development webpack-dev-server",
+    "build": "NODE_ENV=production webpack"
+  }
+}
