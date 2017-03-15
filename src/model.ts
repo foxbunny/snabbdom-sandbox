@@ -1,19 +1,18 @@
 export interface Model {
   data: any
-  map(fn: Function): void
-  unmap(): void
+  subscribe(fn: Function): void
+  unsubscribe(fn: Function): void
   update(fn: Function): void
   forceEmit(): void
 }
 
 export const createModel = (initialData: any): Model => {
   let data: any = initialData
-  let subscriber: (Function | null) = null
+  let subscribers: Function[] = []
 
   const emit = () => {
-    subscriber ?
-      subscriber(data)
-      : null
+    if (!subscribers.length) return
+    subscribers.forEach(fn => { fn(data) })
   }
 
   return {
@@ -21,12 +20,12 @@ export const createModel = (initialData: any): Model => {
       return data
     },
 
-    map(fn: Function) {
-      subscriber = fn
+    subscribe(fn: Function) {
+      subscribers = subscribers.concat([fn])
     },
 
-    unmap() {
-      subscriber = null
+    unsubscribe(fn: Function) {
+      subscribers = subscribers.filter(sub => fn !== sub)
     },
 
     update(fn: Function) {

@@ -15,11 +15,11 @@ export interface ProgramOutput {
 }
 
 export const start = (program: Function, root: string, initialData: any) => {
-  // This is the data that will be made available to the program
+  const model = createModel(initialData)
   const input = {
     on,
-    model: createModel(initialData),
-    createView: createView(initialData)
+    model: model,
+    createView: createView(model)
   }
 
   const output: ProgramOutput = program(input)
@@ -27,29 +27,13 @@ export const start = (program: Function, root: string, initialData: any) => {
   // Connect the event stream to program output
   output.updates.addListener({
     next(fn: Function) {
-      input.model.update(fn)
+      model.update(fn)
     },
     error(err: any) {
       console.error('event$', err)
     },
   } as Listener<Function>)
 
-  // Create a data stream to drive view updates
-  xs.create({
-    start(listener) {
-      input.model.map(listener.next.bind(listener))
-    },
-    stop() {
-      input.model.unmap()
-    }
-  } as Producer<any>)
-    .map(output.view.update)
-    .addListener({
-      error(err: any) {
-        console.error('data$', err)
-      }
-    } as Listener<any>)
-
   output.view.renderInto(root)
-  input.model.forceEmit()
+  model.forceEmit()
 }
