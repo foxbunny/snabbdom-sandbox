@@ -1,4 +1,4 @@
-export interface Store {
+export interface Model {
   data: any
   map(fn: Function): void
   unmap(): void
@@ -6,7 +6,7 @@ export interface Store {
   forceEmit(): void
 }
 
-export const createStore = (initialData: any): Store => {
+export const createModel = (initialData: any): Model => {
   let data: any = initialData
   let subscriber: (Function | null) = null
 

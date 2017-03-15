@@ -1,5 +1,5 @@
 import { createView, View } from './vdom'
-import { createStore, Store } from './store'
+import { createModel, Model } from './model'
 import { on } from './event'
 import xs, { Stream, Producer, Listener } from 'xstream'
 
@@ -18,7 +18,7 @@ export const start = (program: Function, root: string, initialData: any) => {
   // This is the data that will be made available to the program
   const input = {
     on,
-    store: createStore(initialData),
+    model: createModel(initialData),
     createView: createView(initialData)
   }
 
@@ -27,7 +27,7 @@ export const start = (program: Function, root: string, initialData: any) => {
   // Connect the event stream to program output
   output.updates.addListener({
     next(fn: Function) {
-      input.store.update(fn)
+      input.model.update(fn)
     },
     error(err: any) {
       console.error('event$', err)
@@ -37,10 +37,10 @@ export const start = (program: Function, root: string, initialData: any) => {
   // Create a data stream to drive view updates
   xs.create({
     start(listener) {
-      input.store.map(listener.next.bind(listener))
+      input.model.map(listener.next.bind(listener))
     },
     stop() {
-      input.store.unmap()
+      input.model.unmap()
     }
   } as Producer<any>)
     .map(output.view.update)
@@ -51,5 +51,5 @@ export const start = (program: Function, root: string, initialData: any) => {
     } as Listener<any>)
 
   output.view.renderInto(root)
-  input.store.forceEmit()
+  input.model.forceEmit()
 }
