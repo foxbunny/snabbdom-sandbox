@@ -1,4 +1,4 @@
-import { createView, View } from './vdom'
+import { createView, View } from './view'
 import { createModel, Model } from './model'
 import { on } from './event'
 import xs, { Stream, Producer, Listener } from 'xstream'
