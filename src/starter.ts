@@ -5,7 +5,7 @@ import xs, { Stream, Producer, Listener } from 'xstream'
 
 export interface ProgramInput {
   on(eventName: string, selector: string): Stream<Event>
-  store: Store
+  store: Model
   createView(viewfn: Function): View
 }
 
