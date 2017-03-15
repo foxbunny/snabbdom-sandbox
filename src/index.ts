@@ -5,32 +5,23 @@ import xs from 'xstream'
 
 import { start } from './starter'
 
-const mainView = (data: any): VNode =>
+const mainView = (data: {name: string}): VNode =>
   h('p', [
-    h('button.increment', 'Increment'),
-    h('button.decrement', 'Decrement'),
-    h('span', 'Count: ' + data.count)
+    h('p', 'Hello, ' + data.name),
+    h('p', [
+      h('input.name', {props: {value: data.name}})
+    ])
   ])
 
-const increment = (data: {count: number}) =>
-  ({...data, count: data.count + 10})
-
-const decrement = (data: {count: number}) =>
-  ({...data, count: data.count - 10})
-
 const program = (input) => {
-  const increment$ = input.on('click', '.increment')
-    .map(always(increment))
-
-  const decrement$ = input.on('click', '.decrement')
-    .map(always(decrement))
-
-  const action$ = xs.merge(increment$, decrement$)
+  const input$ = input.on('input', '.name')
+    .map(e => e.target.value)
+    .map(name => data => ({...data, name: name}))
 
   return {
-    updates: action$,
+    updates: input$,
     view: input.createView(mainView)
   }
 }
 
-start(program, '#app', {count: 0})
+start(program, '#app', {name: 'World'})
