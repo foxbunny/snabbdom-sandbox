@@ -19,3 +19,5 @@ export const program = (input) => ({
   updates: updates(input),
   view: input.createView(view)
 })
+
+export const init = {name: 'World'}
