@@ -12,7 +12,9 @@ export interface View {
   renderInto(root: string): void
 }
 
-export const createView = (model: Model) => (viewfn: Function): View => {
+export declare type ViewFunction = (data: any) => VNode
+
+export const createView = (model: Model) => (viewfn: ViewFunction): View => {
   let vnodes: VNode = viewfn(model.data)
   let destroyHook: Function
 

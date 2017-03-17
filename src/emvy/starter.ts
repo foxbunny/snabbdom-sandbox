@@ -1,13 +1,13 @@
 import { Promise } from 'es6-promise'
 import xs, { Stream, Producer, Listener } from 'xstream'
-import { createView, View } from './view'
+import { createView, View, ViewFunction } from './view'
 import { createModel, Model } from './model'
 import { eventStreamPlugin } from './event'
 
 export interface ProgramInput {
   on(eventName: string, selector: string): Stream<Event>
-  store: Model
-  createView(viewfn: Function): View
+  model: Model
+  createView(viewfn: ViewFunction): View
   props?: any
 }
 
