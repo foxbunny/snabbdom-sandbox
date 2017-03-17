@@ -23,3 +23,8 @@ export const on = (eventName: string, selector: string): Stream<Event> => {
     event$.filter(targetMatches(selector))
     : event$
 }
+
+export const eventStreamPlugin = (input) => ({
+  ...input,
+  on
+})

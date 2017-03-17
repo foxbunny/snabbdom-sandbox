@@ -1,11 +1,11 @@
 import h from 'snabbdom/h'
 import { VNode } from 'snabbdom/vnode'
 import xs from 'xstream'
-import invoker = require('ramda/src/invoker')
-import path = require('ramda/src/path')
-import sortBy = require('ramda/src/sortBy')
-import prop = require('ramda/src/prop')
-import always = require('ramda/src/always')
+import * as invoker from 'ramda/src/invoker'
+import * as path from 'ramda/src/path'
+import * as sortBy from 'ramda/src/sortBy'
+import * as prop from 'ramda/src/prop'
+import * as always from 'ramda/src/always'
 
 import { ProgramOutput } from '../emvy/starter'
 import { request } from '../emvy/xhr'
@@ -39,10 +39,10 @@ export const view = (input) => (data): VNode => {
 
 export const updates = (input) => {
   const load$ = input.on('click', '.load')
-    .map(always(
+    .map(() =>
       request({url: 'http://jsonplaceholder.typicode.com/users'})
         .then(users => data => ({...data, users}))
-    ))
+    )
   const clear$ = input.on('click', '.clear')
     .map(always(data => ({...data, users: []})))
   const sort$ = input.on('click', '.sort')

@@ -1,12 +1,11 @@
 import { init } from 'snabbdom'
 import { VNode } from 'snabbdom/vnode'
-import classes from 'snabbdom/modules/class'
 import props from 'snabbdom/modules/props'
 import style from 'snabbdom/modules/style'
 
 import { Model } from './model'
 
-export const patch = init([ classes, props, style ])
+export const patch = init([ props, style ])
 
 export interface View {
   vnodes: VNode,

@@ -1,8 +1,8 @@
+import { Promise } from 'es6-promise'
+import xs, { Stream, Producer, Listener } from 'xstream'
 import { createView, View } from './view'
 import { createModel, Model } from './model'
-import { on } from './event'
-import { Promise } from 'bluebird'
-import xs, { Stream, Producer, Listener } from 'xstream'
+import { eventStreamPlugin } from './event'
 
 export interface ProgramInput {
   on(eventName: string, selector: string): Stream<Event>
@@ -16,25 +16,29 @@ export interface ProgramOutput {
   view: View
 }
 
-export const start = (program: Function, root: string, initialData: any) => {
+export const compose = (plugins: Function[]) =>
+  plugins.reduce((ext1, ext2) => (input) => ext1(ext2(input)))
+
+export const start = (
+  program: Function,
+  root: string,
+  initialData: any,
+  plugins: Function[] = [eventStreamPlugin]) => {
+
   const model = createModel(initialData)
-  const input = {
-    on,
+  const input = compose(plugins)({
     model: model,
     createView: createView(model)
-  }
+  })
 
   const output: ProgramOutput = program(input)
 
-  // Connect the event stream to program output
+  // Connect the update stream to program output
   output.updates.addListener({
-    next(fn: Function|Promise) {
-      if (fn instanceof Promise) {
+    next(fn: Function|Promise<Function>) {
+      fn instanceof Promise ?
         fn.then(fn => model.update(fn))
-      }
-      else {
-        model.update(fn)
-      }
+        : model.update(fn)
     },
     error(err: any) {
       console.error('event$', err)
