@@ -8,7 +8,7 @@ import { ProgramInput, ProgramOutput } from '../emvy/starter'
 export const view = (props: {user: any}): Function => (): VNode =>
   h('div.user', [
     h('h2', props.user.name),
-    h('p', props.user.email)
+    h('p', h('a', {props: {href: 'mailto:' + props.user.email}}, 'email'))
   ])
 
 export const program = (input: ProgramInput): ProgramOutput => {
