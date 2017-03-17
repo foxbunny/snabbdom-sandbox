@@ -6,7 +6,7 @@ import * as sortBy from 'ramda/src/sortBy'
 import * as prop from 'ramda/src/prop'
 import * as always from 'ramda/src/always'
 
-import { ProgramOutput } from '../emvy/starter'
+import { mapView, SimpleOutput } from '../emvy/view'
 import { request } from '../emvy/xhr'
 
 import { program as user } from './user'
@@ -47,11 +47,11 @@ export const updates = (input) => {
   return xs.merge(load$, clear$, sort$)
 }
 
-export const program = (input) => {
+export const program = mapView((input) => {
   return {
     updates: updates(input),
-    view: input.createView(view(input))
-  } as ProgramOutput
-}
+    view: view(input)
+  } as SimpleOutput
+})
 
 export const init = {users: [], selected: null}

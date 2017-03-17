@@ -2,17 +2,21 @@ import h from 'snabbdom/h'
 import { VNode } from 'snabbdom/vnode'
 import xs from 'xstream'
 
-import { ProgramInput, ProgramOutput } from '../emvy/starter'
+import { ProgramInput } from '../emvy/starter'
+import { mapView, SimpleOutput } from '../emvy/view'
 
-export const view = (props: {user: any}): Function => (): VNode =>
+interface UserProps {
+  user: any
+}
+
+export const view = (props: UserProps) => (): VNode =>
   h('div.user', [
     h('h2', props.user.name),
     h('p', h('a', {props: {href: 'mailto:' + props.user.email}}, 'email'))
   ])
 
-export const program = (input: ProgramInput): ProgramOutput => {
+export const program = mapView((input: ProgramInput) => {
   return {
-    updates: xs.of(x => x),
-    view: input.createView(view(input.props))
-  }
-}
+    view: view(input.props)
+  } as SimpleOutput
+})

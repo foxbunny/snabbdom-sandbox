@@ -12,9 +12,11 @@ export interface ProgramInput {
 }
 
 export interface ProgramOutput {
-  updates: Stream<Function>
+  updates?: Stream<Function>
   view: View
 }
+
+export declare type Program = (input: ProgramInput) => ProgramOutput
 
 export const compose = (plugins: Function[]) =>
   plugins.reduce((ext1, ext2) => (input) => ext1(ext2(input)))
@@ -33,17 +35,19 @@ export const start = (
 
   const output: ProgramOutput = program(input)
 
-  // Connect the update stream to program output
-  output.updates.addListener({
-    next(fn: Function|Promise<Function>) {
-      fn instanceof Promise ?
-        fn.then(fn => model.update(fn))
-        : model.update(fn)
-    },
-    error(err: any) {
-      console.error('event$', err)
-    },
-  } as Listener<Function>)
+  // Connect the update stream (if any) to program output
+  output.updates ?
+    output.updates.addListener({
+      next(fn: Function|Promise<Function>) {
+        fn instanceof Promise ?
+          fn.then(fn => model.update(fn))
+          : model.update(fn)
+      },
+      error(err: any) {
+        console.error('event$', err)
+      },
+    } as Listener<Function>)
+    : null
 
   output.view.renderInto(root)
   model.forceEmit()
