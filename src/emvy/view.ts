@@ -49,7 +49,7 @@ export const createView = (model: Model) => (viewfn: ViewFunction): View => {
 }
 
 export const mapView = (program: Function) => (input: ProgramInput) => {
-  const output: PartialOutput = program(input)
+  const output: SimpleOutput = program(input)
   return {
     ...output,
     view: createView(input.model)(output.view)
