@@ -1,7 +1,6 @@
 import h from 'snabbdom/h'
 import { VNode } from 'snabbdom/vnode'
 import xs from 'xstream'
-import * as invoker from 'ramda/src/invoker'
 import * as path from 'ramda/src/path'
 import * as sortBy from 'ramda/src/sortBy'
 import * as prop from 'ramda/src/prop'
@@ -11,8 +10,6 @@ import { ProgramOutput } from '../emvy/starter'
 import { request } from '../emvy/xhr'
 
 import { program as user } from './user'
-
-const then = invoker(1, 'then')
 
 export const view = (input) => (data): VNode => {
   let users: {}[]
