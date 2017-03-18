@@ -1,4 +1,4 @@
-import * as util from './util'
+import * as util from './index'
 
 test('util.init will return all array items except last', () => {
   expect(util.init([1, 2, 3])).toEqual([1, 2])
@@ -69,4 +69,21 @@ test('util.always returns a function that always evaluates to same value', () =>
   expect(fn()).toBe(true)
   expect(fn(2)).toBe(true)
   expect(fn(12)).toBe(true)
+})
+
+test('util.memoized will memoize an unary function', () => {
+  let count = 0
+  const fn = (x: any) => {
+    count += 1
+    return x * x
+  }
+  const memoized = util.memoized(fn)
+  expect(memoized(2)).toBe(4)
+  expect(count).toBe(1)
+  expect(memoized(2)).toBe(4)
+  expect(count).toBe(1)
+  expect(memoized(4)).toBe(16)
+  expect(count).toBe(2)
+  expect(memoized(4)).toBe(16)
+  expect(count).toBe(2)
 })
