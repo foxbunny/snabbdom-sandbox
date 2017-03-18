@@ -1,17 +1,15 @@
 import h from 'snabbdom/h'
 import { VNode } from 'snabbdom/vnode'
 import xs from 'xstream'
-import * as path from 'ramda/src/path'
-import * as sortBy from 'ramda/src/sortBy'
-import * as prop from 'ramda/src/prop'
-import * as always from 'ramda/src/always'
+import { path, sortBy, prop, always } from 'ramda'
 
+import { ProgramInput, Program } from '../emvy/starter'
 import { mapView, SimpleOutput } from '../emvy/view'
 import { request } from '../emvy/xhr'
 
 import { program as user } from './user'
 
-export const view = (input) => (data): VNode => {
+export const view = (input: ProgramInput) => (data: any): VNode => {
   let users: {}[]
   if (data.sort === 'name') {
     users = sortBy(prop('name'), data.users)
@@ -34,24 +32,29 @@ export const view = (input) => (data): VNode => {
   )
 }
 
-export const updates = (input) => {
+export const updates = (input: ProgramInput) => {
   const load$ = input.on('click', '.load')
     .map(() =>
       request({url: 'http://jsonplaceholder.typicode.com/users'})
-        .then(users => data => ({...data, users}))
+        .then((users) => (data: any): any => ({...data, users}))
     )
   const clear$ = input.on('click', '.clear')
-    .map(always(data => ({...data, users: []})))
+    .map(always((data: any): any => ({...data, users: []})))
   const sort$ = input.on('click', '.sort')
-    .map(always(data => ({...data, sort: data.sort === 'name' ? null : 'name'})))
+    .map(always((data: any): any => ({...data, sort: data.sort === 'name' ? null : 'name'})))
   return xs.merge(load$, clear$, sort$)
 }
 
-export const program = mapView((input) => {
+export const program: Program = mapView((input: ProgramInput): SimpleOutput => {
   return {
     updates: updates(input),
     view: view(input)
   } as SimpleOutput
 })
 
-export const init = {users: [], selected: null}
+export interface UsersModel {
+  users: any[]
+  selected: string | null
+}
+
+export const init: UsersModel = {users: [], selected: null}
