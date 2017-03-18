@@ -10,8 +10,6 @@ export const init = (x: any[]): any[] =>
 
 /**
  * Returns the last item of an array
- *
- * @param x {Array}
  */
 export const last = (x: any[]): any[] =>
   x[x.length - 1]
@@ -25,7 +23,6 @@ export const last = (x: any[]): any[] =>
  *
  *     reversed([1, 2, 3]) => [3, 2, 1]
  *
- * @param x {Array}
  */
 export const reversed = (x: any[]): any[] =>
   x.length ?
@@ -34,16 +31,12 @@ export const reversed = (x: any[]): any[] =>
 
 /**
  * Performs right-to-left function composition
- *
- * @param ...fns {Function}
  */
 export const compose = (...fns: Function[]): Function =>
   fns.reduce((f, g) => (...args: any[]) => f(g(...args)))
 
 /**
  * Performs left-to-right function composition
- *
- * @param ...fns {Function}
  */
 export const pipe = (...fns: Function[]): Function =>
   fns.reduce((f, g) => (...args: any[]) => g(f(...args)))
