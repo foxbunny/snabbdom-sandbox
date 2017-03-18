@@ -27,7 +27,7 @@ export const createView = (model: Model) => (viewfn: ViewFunction): View => {
   let vnodes: VNode = viewfn(model.data)
   let destroyHook: Function
 
-  const update = data => {
+  const update = (data: any): void => {
     const newVnodes = viewfn(data)
     patch(vnodes, newVnodes)
     vnodes = newVnodes
@@ -42,7 +42,7 @@ export const createView = (model: Model) => (viewfn: ViewFunction): View => {
     get vnodes() {
       return vnodes
     },
-    renderInto(root: string) {
+    renderInto(root: string): void {
       patch(document.querySelector(root), vnodes)
     }
   }
