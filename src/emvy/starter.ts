@@ -1,8 +1,10 @@
 import { Promise } from 'es6-promise'
 import xs, { Stream, Producer, Listener } from 'xstream'
+
 import { createView, View, ViewFunction } from './view'
 import { createModel, Model } from './model'
 import { eventStreamPlugin } from './event'
+import { pipe } from './util'
 
 export interface ProgramInput {
   on(eventName: string, selector: string): Stream<Event>
@@ -16,10 +18,9 @@ export interface ProgramOutput {
   view: View
 }
 
-export declare type Program = (input: ProgramInput) => ProgramOutput
+export declare type Plugin = (input: Object) => Object
 
-export const compose = (plugins: Function[]) =>
-  plugins.reduce((ext1, ext2) => (input) => ext1(ext2(input)))
+export declare type Program = (input: ProgramInput) => ProgramOutput
 
 export const start = (
   program: Function,
@@ -28,7 +29,7 @@ export const start = (
   plugins: Function[] = [eventStreamPlugin]) => {
 
   const model = createModel(initialData)
-  const input = compose(plugins)({
+  const input = pipe(...plugins)({
     model: model,
     createView: createView(model)
   })
