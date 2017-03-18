@@ -1,7 +1,10 @@
 import h from 'snabbdom/h'
 import { VNode } from 'snabbdom/vnode'
-import always = require('ramda/src/always')
-import xs from 'xstream'
+import { always } from 'ramda'
+import xs, { Stream } from 'xstream'
+
+import { Program, ProgramInput } from '../emvy/starter';
+import { SimpleOutput, mapView } from '../emvy/view'
 
 export const view = (data: any): VNode =>
   h('p', [
@@ -16,7 +19,7 @@ export const increment = (data: {count: number}) =>
 export const decrement = (data: {count: number}) =>
   ({...data, count: data.count - 10})
 
-export const updates = (input) => {
+export const updates = (input: ProgramInput): Stream<Function> => {
   const increment$ = input.on('click', '.increment')
     .map(always(increment))
 
@@ -26,9 +29,9 @@ export const updates = (input) => {
   return xs.merge(increment$, decrement$)
 }
 
-export const program = (input) => ({
+export const program: Program = mapView((input: ProgramInput): SimpleOutput => ({
   updates: updates(input),
-  view: input.createView(view)
-})
+  view: view
+}))
 
 export const init = {count: 0}

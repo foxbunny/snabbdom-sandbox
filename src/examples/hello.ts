@@ -1,6 +1,9 @@
 import h from 'snabbdom/h'
 import { VNode } from 'snabbdom/vnode'
-import always = require('ramda/src/always')
+import { always } from 'ramda'
+
+import { ProgramInput } from '../emvy/starter'
+import { SimpleOutput, mapView } from '../emvy/view'
 
 export const view = (data: {name: string}): VNode =>
   h('p', [
@@ -10,14 +13,18 @@ export const view = (data: {name: string}): VNode =>
     ])
   ])
 
-export const updates = (input) =>
-  input.on('input', '.name')
-    .map(e => e.target.value)
-    .map(name => data => ({...data, name: name}))
+export interface InputEvent extends Event {
+  target: HTMLInputElement
+}
 
-export const program = (input) => ({
+export const updates = (input: ProgramInput) =>
+  input.on('input', '.name')
+    .map((e: InputEvent): String => e.target.value)
+    .map((name: string) => (data: any): any => ({...data, name: name}))
+
+export const program = mapView((input: ProgramInput): SimpleOutput => ({
   updates: updates(input),
-  view: input.createView(view)
-})
+  view: view
+}))
 
 export const init = {name: 'World'}
