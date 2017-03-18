@@ -1,0 +1,9 @@
+{
+  "name": "snabtest",
+  "dependencies": {
+    "ramda": "github:donnut/typescript-ramda"
+  },
+  "globalDependencies": {
+    "jest": "registry:dt/jest#19.2.0+20170312200138"
+  }
+}
