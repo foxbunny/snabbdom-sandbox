@@ -87,3 +87,64 @@ test('util.memoized will memoize an unary function', () => {
   expect(memoized(4)).toBe(16)
   expect(count).toBe(2)
 })
+
+test('util.path will return a leaf key from nested objects', () => {
+  expect(util.path(['foo', 'bar', 'baz'], {foo: {bar: {baz: 12}}})).toBe(12)
+})
+
+test('util.path will return undefined if intermediate structure is missing', () => {
+  expect(util.path(['foo', 'bar', 'baz'], {})).toBe(undefined)
+  expect(util.path(['foo', 'bar', 'baz'], {foo: {}})).toBe(undefined)
+  expect(util.path(['foo', 'bar', 'baz'], {foo: 12})).toBe(undefined)
+})
+
+test('util.assocPath will assign a value to a specified leaf key in a nested object', () => {
+  const o = {foo: {bar: {baz: 12}}}
+  expect(util.assocPath(['foo', 'bar', 'baz'], 10, o))
+    .toEqual({foo: {bar: {baz: 10}}})
+})
+
+test('util.assocPath will create intermediate sturcture if missing', () => {
+  expect(util.assocPath(['foo', 'bar', 'baz'], 10, {}))
+    .toEqual({foo: {bar: {baz: 10}}})
+})
+
+test('util.patch will patch an object with given value', () => {
+  const o = {foo: {bar: {baz: 12}}}
+  const o1 = util.patch(['foo', 'bar'], ((bar: any) => ({...bar, fam: 10})), o)
+  expect(o1).toEqual({foo: {bar: {baz: 12, fam: 10}}})
+})
+
+test('util.patch will create intermediate structure if missing', () => {
+  const o1 = util.patch(['foo', 'bar'], ((bar: any) => ({...bar, fam: 10})), {})
+  expect(o1).toEqual({foo: {bar: {fam: 10}}})
+})
+
+test('util.curriedN will curry a function with n arguments', () => {
+  const fn = (x: number, y: number, z: number) => x + y + z
+  const c = util.curriedN(3, fn)
+  expect(typeof c(1)).toBe('function')
+  expect(typeof c(1, 2)).toBe('function')
+  expect(typeof c(1)(2)).toBe('function')
+  expect(c(1)(2)(3)).toBe(6)
+  expect(c(1, 2)(3)).toBe(6)
+  expect(c(1)(2, 3)).toBe(6)
+  expect(c(1, 2, 3)).toBe(6)
+})
+
+test("util.curriedN will not care about function's actual arity", () => {
+  const fn = (x: number, y: number, z: number = 0) => x + y + z
+  const c = util.curriedN(2, fn)
+  expect(c(1, 2)).toBe(3)
+  expect(c(1)(2)).toBe(3)
+  expect(c(1, 2, 3)).toBe(6)
+})
+
+test('util.curried will return a curried version of a function', () => {
+  const fn = (x: number, y: number, z: number): number => x + y + z
+  const c = util.curried(fn)
+  expect(c(1)(2)(3)).toBe(6)
+  expect(c(1, 2)(3)).toBe(6)
+  expect(c(1)(2, 3)).toBe(6)
+  expect(c(1, 2, 3)).toBe(6)
+})

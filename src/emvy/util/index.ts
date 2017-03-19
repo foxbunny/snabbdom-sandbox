@@ -6,6 +6,11 @@ import pipe from './pipe'
 import always from './always'
 import memoized from './memoized'
 import identity from './identity'
+import path from './path'
+import assocPath from './assocPath'
+import patch from './patch'
+import curriedN from './curriedN'
+import curried from './curried'
 
 export {
   init,
@@ -15,5 +20,10 @@ export {
   pipe,
   always,
   memoized,
-  identity
+  identity,
+  path,
+  assocPath,
+  patch,
+  curriedN,
+  curried
 }
