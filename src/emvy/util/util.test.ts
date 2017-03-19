@@ -157,3 +157,16 @@ test('util.assoc will return a copy of an object with value assigned to given pr
 test('util.assoc will create a missing key', () => {
   expect(util.assoc('bar', 12, {})).toEqual({bar: 12})
 })
+
+test('util.merge will merge an object into another', () => {
+  const o1 = {foo: 12}
+  const o2 = {bar: 10}
+  expect(util.merge(o1, o2)).toEqual({foo: 12, bar: 10})
+})
+
+test('util.merge will give precedence to first object when props conflict', () => {
+  const o1 = {foo: 12, bar: 10}
+  const o2 = {bar: 12, baz: 14}
+  expect(util.merge(o1, o2)).toEqual({foo: 12, bar: 10, baz: 14})
+  expect(util.merge(o2, o1)).toEqual({foo: 12, bar: 12, baz: 14})
+})

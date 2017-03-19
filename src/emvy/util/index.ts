@@ -12,6 +12,7 @@ import assocPath from './assocPath'
 import patch from './patch'
 import curriedN from './curriedN'
 import curried from './curried'
+import merge from './merge'
 
 export {
   init,
@@ -27,5 +28,6 @@ export {
   assocPath,
   patch,
   curriedN,
-  curried
+  curried,
+  merge
 }
