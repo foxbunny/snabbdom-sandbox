@@ -7,7 +7,7 @@ import { eventStreamPlugin } from './event'
 import { pipe } from './util'
 
 export interface ProgramInput {
-  on(eventName: string, selector: string): Stream<Event>
+  on(eventName: string, selector?: string): Stream<Event>
   model: Model
   createView(viewfn: ViewFunction): View
   props?: any

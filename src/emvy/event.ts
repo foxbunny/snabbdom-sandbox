@@ -27,7 +27,7 @@ export const createEventStream = ((eventStreams: any) =>
       } as Producer<Event>)
 )({})
 
-export const on = (eventName: string, selector: string): Stream<Event> => {
+export const on = (eventName: string, selector?: string): Stream<Event> => {
   const event$ = createEventStream(eventName)
   return selector ?
     event$.filter(targetMatches(selector))
