@@ -148,3 +148,12 @@ test('util.curried will return a curried version of a function', () => {
   expect(c(1)(2, 3)).toBe(6)
   expect(c(1, 2, 3)).toBe(6)
 })
+
+test('util.assoc will return a copy of an object with value assigned to given prop', () => {
+  const o = {foo: 12, bar: 10, baz: 11}
+  expect(util.assoc('bar', 12, o)).toEqual({foo: 12, bar: 12, baz: 11})
+})
+
+test('util.assoc will create a missing key', () => {
+  expect(util.assoc('bar', 12, {})).toEqual({bar: 12})
+})

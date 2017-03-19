@@ -7,6 +7,7 @@ import always from './always'
 import memoized from './memoized'
 import identity from './identity'
 import path from './path'
+import assoc from './assoc'
 import assocPath from './assocPath'
 import patch from './patch'
 import curriedN from './curriedN'
@@ -22,6 +23,7 @@ export {
   memoized,
   identity,
   path,
+  assoc,
   assocPath,
   patch,
   curriedN,
