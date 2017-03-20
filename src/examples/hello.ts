@@ -1,30 +1,35 @@
 import h from 'snabbdom/h'
+import { Stream } from 'xstream'
 import { VNode } from 'snabbdom/vnode'
 import { always } from 'ramda'
 
-import { ProgramInput } from '../emvy/starter'
-import { SimpleOutput, mapView } from '../emvy/view'
+import { ProgramInput, createProgram } from '../emvy/starter'
+import html from '../emvy/html'
+import merge from '../emvy/util/merge'
 
-export const view = (data: {name: string}): VNode =>
-  h('p', [
-    h('p', 'Hello, ' + data.name),
-    h('p', [
-      h('input.name', {props: {value: data.name}})
-    ])
+
+const { p, input } = html
+
+
+export const modelView = (data: {name: string}): VNode =>
+  p([
+    p('Hello, ' + (data.name.length ? data.name : 'World')),
+    p(input('.name', {props: {value: data.name}}))
   ])
+
+export const eventModel = (input: ProgramInput): Stream<Function> =>
+  input.on('input', '.name')
+    .map((e: InputEvent): String => e.target.value)
+    .map((name: string) => merge({name: name}))
+
+
+export const program = createProgram(modelView, eventModel)
+
+
+export const init = {name: 'World'}
+
 
 export interface InputEvent extends Event {
   target: HTMLInputElement
 }
 
-export const updates = (input: ProgramInput) =>
-  input.on('input', '.name')
-    .map((e: InputEvent): String => e.target.value)
-    .map((name: string) => (data: any): any => ({...data, name: name}))
-
-export const program = mapView((input: ProgramInput): SimpleOutput => ({
-  updates: updates(input),
-  view: view
-}))
-
-export const init = {name: 'World'}

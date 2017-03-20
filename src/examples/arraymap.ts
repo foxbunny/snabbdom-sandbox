@@ -3,36 +3,39 @@ import { VNode } from 'snabbdom/vnode'
 import xs from 'xstream'
 import { path, sortBy, prop, always } from 'ramda'
 
-import { ProgramInput, Program } from '../emvy/starter'
-import { mapView, SimpleOutput } from '../emvy/view'
+import { ProgramInput, createProgram } from '../emvy/starter'
 import { request } from '../emvy/xhr'
+import html from '../emvy/html'
 
-import { program as user } from './user'
 
-export const view = (input: ProgramInput) => (data: any): VNode => {
-  let users: {}[]
-  if (data.sort === 'name') {
-    users = sortBy(prop('name'), data.users)
-  }
-  else {
-    users = data.users
-  }
+const { div, h2, p, a, button } = html
+
+
+export const user = (user: any): VNode =>
+  div('.user', [
+    h2(user.name),
+    p(a({ props: { href: 'mailto:' + user.email } }, 'email'))
+  ])
+
+
+export const modelView = (data: any): VNode => {
+  const users = data.sort === 'name' ?
+    sortBy(prop('name'), data.users)
+    : data.users
   return (
-    h('div', [
-      h('p', [
-        h('button.load', 'Load users'),
-        h('button.clear', 'Clear'),
-        h('button.sort', data.sort === 'name' ? 'Unsort' : 'Sort by name')
+    div([
+      p([
+        button('.load', 'Load users'),
+        button('.clear', 'Clear'),
+        button('.sort', data.sort === 'name' ? 'Unsort' : 'Sort by name')
       ]),
-      h('div', users
-        .map(u => user({...input, props: {user: u}}))
-        .map(path(['view', 'vnodes']))
-      )
+      div(users.map(user))
     ])
   )
 }
 
-export const updates = (input: ProgramInput) => {
+
+export const eventModel = (input: ProgramInput) => {
   const load$ = input.on('click', '.load')
     .map(() =>
       request({url: 'http://jsonplaceholder.typicode.com/users'})
@@ -45,16 +48,14 @@ export const updates = (input: ProgramInput) => {
   return xs.merge(load$, clear$, sort$)
 }
 
-export const program: Program = mapView((input: ProgramInput): SimpleOutput => {
-  return {
-    updates: updates(input),
-    view: view(input)
-  } as SimpleOutput
-})
+
+export const program = createProgram(modelView, eventModel)
+
+
+export const init = {users: [], selected: null} as UsersModel
+
 
 export interface UsersModel {
   users: any[]
   selected: string | null
 }
-
-export const init: UsersModel = {users: [], selected: null}
